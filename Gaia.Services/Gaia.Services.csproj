@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Axis.Luna.Common" Version="4.2.2" />
+    <PackageReference Include="Axis.Luna.Extensions" Version="4.2.1" />
+    <PackageReference Include="Axis.Luna.Operation" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gaia.Core\Gaia.Core.csproj" />
+  </ItemGroup>
+
+</Project>
