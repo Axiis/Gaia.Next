@@ -9,12 +9,18 @@ namespace Gaia.Core.Contracts
     {
         Operation<Cooperative> CreateCooperative(Cooperative cooperative);
         Operation<Cooperative> UpdateCooperative(Cooperative cooperative);
-        Operation UpdateCooperativeStatus(Guid cooperativeId, int status);
+        Operation UpdateCooperativeStatus(Guid cooperativeId, CooperativeStatus status);
+
+        Operation AddAdmin(Guid cooperativeId, Guid userId);
+        Operation RemoveAdmin(Guid cooperativeId, Guid userId);
 
         Operation AddFarm(Guid cooperativeId, Guid farmId);
         Operation RemoveFarm(Guid cooperativeId, Guid farmId);
 
-        Operation<ArrayPage<Cooperative>> GetUserCooperatives(Guid userId, ArrayPageRequest request = null);
+        Operation<Cooperative> GetCooperative(Guid cooperativeId);
+
+        Operation<ArrayPage<Cooperative>> GetAdminCooperatives(Guid userId, ArrayPageRequest request = null);
+        Operation<ArrayPage<Cooperative>> GetFarmerCooperatives(Guid farmerId, ArrayPageRequest request = null);
         Operation<ArrayPage<Cooperative>> GetAllCooperatives(ArrayPageRequest request = null);
 
         Operation<ArrayPage<Farmer>> GetRegisteredFarmers(Guid cooperativeId, ArrayPageRequest request = null);

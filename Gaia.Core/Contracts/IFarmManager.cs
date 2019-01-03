@@ -8,34 +8,6 @@ using Gaia.Core.Utils;
 
 namespace Gaia.Core.Contracts
 {
-    public interface IFarmerManager
-    {
-        #region Farmer
-
-        /// <summary>
-        /// Adds a new farmer instance to the store - the userId provided corresponds to the User Account that
-        /// owns the farmer instance.
-        /// </summary>
-        /// <param name="userAccountId"></param>
-        /// <param name="farmer"></param>
-        /// <returns></returns>
-        Operation<Farmer> CreateFarmer(Guid userAccountId, Farmer farmer);
-
-        /// <summary>
-        /// updates the farmer instance
-        /// </summary>
-        /// <param name="farmer"></param>
-        /// <returns></returns>
-        Operation<Farmer> UpdateFarmer(Farmer farmer);
-
-        Operation UpdateFarmerStatus(Guid farmerId, int status);
-
-
-        Operation<ArrayPage<Farmer>> GetFarmers(ArrayPageRequest request = null);
-
-        #endregion
-    }
-
     public interface IFarmManager
     { 
         Operation<Farm> CreateFarm(Guid farmer, Farm farm);
@@ -49,17 +21,5 @@ namespace Gaia.Core.Contracts
 
 
         Operation<ArrayPage<Farm>> GetFarms(ArrayPageRequest request = null);
-    }
-
-    public interface IHarvestManager
-    {
-        Operation<HarvestBatch> CreateHarvestBatch(Guid farmId, HarvestBatch batch);
-
-        /// <summary>
-        /// supports modification of title and date
-        /// </summary>
-        /// <param name="batch"></param>
-        /// <returns></returns>
-        Operation<HarvestBatch> UpdateHarvestBatch(HarvestBatch batch);
     }
 }
