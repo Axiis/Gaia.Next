@@ -12,7 +12,7 @@ namespace Gaia.Core.CustomDataAccessAuth
     /// When specific data are supplied - eg Farm, the policy employs special logic to ensure the data actually belongs
     /// to the Farmer
     /// </summary>
-    public class FarmerDataAccess: ICustomAccessDataRoot
+    public class FarmerDataAccess : ICustomAccessDataRoot
     {
         public Farmer Farmer { get; set; }
 
@@ -22,6 +22,27 @@ namespace Gaia.Core.CustomDataAccessAuth
         public Farm Farm { get; set; }
 
         public string CustomDataType => typeof(FarmerDataAccess).FullName;
+
+        public object CompressObjectGraph() => new
+        {
+            Farmer = new
+            {
+                Farmer.EnterpriseName,
+                Farmer.Id,
+                User = new {Farmer.User.Id}
+            },
+
+            Farm = Farm == null? null : new
+            {
+                Farm.Id,
+                Owner = new
+                {
+                    Farm.Owner.EnterpriseName,
+                    Farm.Owner.Id,
+                    User = new {Farm.Owner.User.Id}
+                }
+            }
+        };
 
         public Operation Validate()
         => Operation.Try(() =>

@@ -1,4 +1,5 @@
-﻿using Axis.Luna.Extensions;
+﻿using System.Linq;
+using Axis.Luna.Extensions;
 using Axis.Luna.Operation;
 using Axis.Pollux.Authorization.Contracts.Params;
 using Gaia.Core.Exceptions;
@@ -24,5 +25,21 @@ namespace Gaia.Core.CustomDataAccessAuth
         });
 
         public string CustomDataType => typeof(CooperativeAdminDataAccess).FullName;
+
+        public object CompressObjectGraph() => new
+        {
+            CustomDataType,
+            Admins = Admins
+                .Select(admin => new
+                {
+                    User = new {admin.User.Id},
+                    Cooperative = new
+                    {
+                        admin.Cooperative.Id,
+                        admin.Cooperative.Title
+                    }
+                })
+                .ToArray()
+        };
     }
 }
