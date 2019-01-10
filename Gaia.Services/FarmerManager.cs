@@ -90,7 +90,7 @@ namespace Gaia.Services
 
             var storeCommand = _storeProvider.CommandFor(typeof(Farmer).FullName);
             return (await storeCommand
-                .Update(farmer))
+                .Update(persisted))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreCommandResult));
         });
 
@@ -120,7 +120,7 @@ namespace Gaia.Services
 
             var storeCommand = _storeProvider.CommandFor(typeof(Farmer).FullName);
             (await storeCommand
-                .Update(farmer))
+                .Update(persisted))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreCommandResult));
         });
 

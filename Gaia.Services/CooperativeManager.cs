@@ -234,6 +234,12 @@ namespace Gaia.Services
                 Admins = admins
             });
 
+            //filter out duplicates
+            (await _queries
+                .GetCooperativeFarm(cooperativeId, farmId))
+                .ThrowIfNotNull(new GaiaException(ErrorCodes.DomainLogicError));
+
+            //add the farm
             var coopFarm = new CooperativeFarm
             {
                 Farm = farm,
@@ -241,7 +247,6 @@ namespace Gaia.Services
             };
 
             var storeCommand = _storeProvider.CommandFor(typeof(CooperativeFarm).FullName);
-
             (await storeCommand
                 .Add(coopFarm))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreCommandResult));

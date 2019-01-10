@@ -14,7 +14,13 @@ namespace Gaia.Core.Models
         public GeoPosition[] Area { get; set; }
         public Cooperative[] Cooperatives { get; set; }
 
-        public FarmProduct[] Products { get; set; }
+        public ProductCategory[] Products { get; set; }
         public HarvestBatch[] Harvests { get; set; }
+    }
+
+    public class ProductCategory : BaseModel<Guid>
+    {
+        public FarmProduce FarmProduce { get; set; }
+        public Farm Farm { get; set; }
     }
 }

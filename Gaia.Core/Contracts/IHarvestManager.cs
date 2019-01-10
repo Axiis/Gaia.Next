@@ -27,6 +27,7 @@ namespace Gaia.Core.Contracts
 
         Operation<ArrayPage<HarvestBatch>> GetHarvestBatches(Guid farmId, ArrayPageRequest request = null);
         Operation<ArrayPage<HarvestBatch>> GetHarvestBatches(ArrayPageRequest request = null);
+
         #region harvest
 
         Operation<Harvest> CreateHarvest(Guid batchId, Harvest harvest);
@@ -39,9 +40,9 @@ namespace Gaia.Core.Contracts
         Operation<Harvest> UpdateHarvest(Harvest harvest);
 
 
-        Operation<ArrayPage<HarvestBatch>> GetHarvests(Guid farmId, Guid bachId, ArrayPageRequest request = null);
-        Operation<ArrayPage<HarvestBatch>> GetHarvests(Guid farmId, ArrayPageRequest request = null);
-        Operation<ArrayPage<HarvestBatch>> GetHarvests(ArrayPageRequest request = null);
+        Operation<ArrayPage<Harvest>> GetHarvests(Guid farmId, Guid batchId, ArrayPageRequest request = null);
+        Operation<ArrayPage<Harvest>> GetHarvests(Guid farmId, ArrayPageRequest request = null);
+        Operation<ArrayPage<Harvest>> GetHarvests(ArrayPageRequest request = null);
         #endregion
     }
 }

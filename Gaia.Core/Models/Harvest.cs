@@ -8,6 +8,6 @@ namespace Gaia.Core.Models
         public HarvestBatch Batch { get; set; }
         public Unit Unit { get; set; }
         public double UnitAmount { get; set; }
-        public FarmProduct Product { get; set; }
+        public FarmProduce Produce { get; set; }
     }
 }

@@ -5,6 +5,7 @@
         #region Credential Types
 
         public static readonly string CredentialType_Password = "Password";
+        public static readonly string CredentialType_UserName = "UserName";
 
         #endregion
 
@@ -47,5 +48,12 @@
         public static readonly string MultiFactorEventLabels_FarmerAccountVerification = "Gaia.MultiFactor.EventLabel.FarmerAccountVerification";
 
         #endregion
+
+        #region system configurations
+
+        public static readonly string SystemConfiguration_LogonSessionExpiry = "LogonSession.Expiry";
+
+        #endregion
+
     }
 }

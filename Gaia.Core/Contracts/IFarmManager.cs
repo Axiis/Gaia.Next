@@ -10,7 +10,7 @@ namespace Gaia.Core.Contracts
 {
     public interface IFarmManager
     { 
-        Operation<Farm> CreateFarm(Guid farmer, Farm farm);
+        Operation<Farm> CreateFarm(Guid farmerId, Farm farm);
 
         Operation<Farm> UpdateFarm(Farm farm);
 

@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Axis.Pollux.Common.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Gaia.Core.Models
+namespace Gaia.Data.EFCore.Entities
 {
-    public class FarmProduct: BaseModel<Guid>
+    public class FarmProduce : BaseEntity<Guid>
     {
         public string CommonName { get; set; }
         public string BotanicalName { get; set; }
         public string LocalName { get; set; }
+
+        [Column(TypeName = "ntext")]
         public string Description { get; set; }
 
         //other info can eventually come here
