@@ -55,13 +55,16 @@ namespace Gaia.Data.EFCore.Entities.Authentication
                 entity.ExpiresOn = model.ExpiresOn;
                 entity.IsAuthenticated = model.IsAuthenticated;
 
-                entity.TargetUser = (User) context.Transformer.ToEntity(model.TargetUser, command, context);
-                entity.TargetUserId = entity.TargetUser?.Id ?? Guid.Empty;
+                entity.TargetUser = (User) context.Transformer.ToEntity(
+                    model.TargetUser, 
+                    command, 
+                    context);
+                entity.TargetUserId = entity.TargetUser?.Id ?? default(Guid);
             };
 
             this.EntityToModel = (e, m, command, context) =>
             {
-                var entity = (MultiFactorCredential)e;
+                var entity = (MultiFactorCredential) e;
                 var model = entity.TransformBase(
                     (Axis.Pollux.Authentication.Models.MultiFactorCredential)m,
                     command,
@@ -74,7 +77,10 @@ namespace Gaia.Data.EFCore.Entities.Authentication
                 model.ExpiresOn = entity.ExpiresOn;
                 model.IsAuthenticated = entity.IsAuthenticated;
 
-                model.TargetUser = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(entity.TargetUser, command, context);
+                model.TargetUser = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(
+                    entity.TargetUser, 
+                    command, 
+                    context);
             };
         }
     }

@@ -12,7 +12,7 @@ namespace Gaia.Core.Models
         public string ContactEmail { get; set; }
         public string ContactMobile { get; set; }
         public CooperativeAdmin[] Admins { get; set; }
-        public Farm[] Farms { get; set; }
+        public CooperativeFarm[] Farms { get; set; }
 
         public CooperativeStatus Status { get; set; }
     }

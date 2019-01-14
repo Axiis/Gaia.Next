@@ -55,8 +55,11 @@ namespace Gaia.Data.EFCore.Entities.Authorization
                     .JoinUsing(",");
                 entity.Title = model.Title;
 
-                entity.Parent = (Policy) context.Transformer.ToEntity(model.Parent, command, context);
-                entity.ParentId = entity.Parent?.Id ?? Guid.Empty;
+                entity.Parent = (Policy) context.Transformer.ToEntity(
+                    model.Parent, 
+                    command, 
+                    context);
+                entity.ParentId = entity.Parent?.Id ?? default(Guid);
             };
 
             this.EntityToModel = (e, m, command, context) =>
@@ -75,10 +78,14 @@ namespace Gaia.Data.EFCore.Entities.Authorization
                     .ToArray();
                 model.Title = entity.Title;
 
-                model.Parent = context.Transformer.ToModel<PolluxPolicy>(entity.Parent, command, context);
+                model.Parent = context.Transformer.ToModel<PolluxPolicy>(
+                    entity.Parent, 
+                    command, 
+                    context);
+
                 model.SubPolicies = entity.SubPolicies
                     .Select(policy => context.Transformer.ToModel<PolluxPolicy>(policy, command, context))
-                    //somewhere here, bind policies to their rules from the Gaia.Core.AuthorizationPolicies Assemblies
+                    //somewhere here, bind policies to their rules from the Gaia.Core.AuthorizationPolicies Assembly
                     .ToArray();
             };
         }

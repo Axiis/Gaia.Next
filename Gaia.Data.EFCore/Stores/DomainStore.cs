@@ -1,4 +1,5 @@
-﻿using Gaia.Data.EFCore.Entities.Authorization;
+﻿using Axis.Jupiter;
+using Axis.Jupiter.EFCore;
 using Gaia.Data.EFCore.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,5 +53,21 @@ namespace Gaia.Data.EFCore.Contexts
         #endregion
         
         #endregion
+    }
+
+    public class DomainStoreCommand : EFStoreCommand
+    {
+        public DomainStoreCommand(ModelTransformer transformer, DomainContext context) 
+        : base(transformer, context)
+        {
+        }
+    }
+
+    public class DomainStoreQuery : EFStoreQuery
+    {
+        public DomainStoreQuery(DomainContext context) 
+        : base(context)
+        {
+        }
     }
 }

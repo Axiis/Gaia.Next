@@ -54,8 +54,11 @@ namespace Gaia.Data.EFCore.Entities.Identity
                 entity.Status = model.Status;
                 entity.Street = model.Street;
 
-                entity.Owner = (User)context.Transformer.ToEntity(model.Owner, command, context);
-                entity.OwnerId = entity.Owner?.Id ?? Guid.Empty;
+                entity.Owner = (User) context.Transformer.ToEntity(
+                    model.Owner, 
+                    command, 
+                    context);
+                entity.OwnerId = entity.Owner?.Id ?? default(Guid);
             };
 
             this.EntityToModel = (e, m, command, context) =>
@@ -75,7 +78,10 @@ namespace Gaia.Data.EFCore.Entities.Identity
                 model.Status = entity.Status;
                 model.Street = entity.Street;
 
-                model.Owner = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(entity.Owner, command, context);
+                model.Owner = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(
+                    entity.Owner, 
+                    command, 
+                    context);
             };
         }
     }

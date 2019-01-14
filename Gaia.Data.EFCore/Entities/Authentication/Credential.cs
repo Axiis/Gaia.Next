@@ -62,7 +62,7 @@ namespace Gaia.Data.EFCore.Entities.Authentication
                 entity.Visibility = model.Visibility;
 
                 entity.Owner = (User) context.Transformer.ToEntity(model.Owner, command, context);
-                entity.OwnerId = entity.Owner?.Id ?? Guid.Empty;
+                entity.OwnerId = entity.Owner?.Id ?? default(Guid);
             };
 
             this.EntityToModel = (e, m, command, context) =>
@@ -81,7 +81,10 @@ namespace Gaia.Data.EFCore.Entities.Authentication
                 model.Uniqueness = entity.Uniqueness;
                 model.Visibility = entity.Visibility;
 
-                model.Owner = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(entity.Owner, command, context);
+                model.Owner = context.Transformer.ToModel<Axis.Pollux.Identity.Models.User>(
+                    entity.Owner, 
+                    command, 
+                    context);
             };
         }
     }

@@ -18,6 +18,7 @@ namespace Gaia.Core.Models
         public CommonDataType Type { get; set; }
 
         public AppConfiguration Parent { get; set; }
+        public AppConfiguration[] Children { get; set; }
 
 
         public void Initialize(string[] tuple)

@@ -12,7 +12,7 @@ namespace Gaia.Core.Models
         public string Description { get; set; }
         public string LocationDescription { get; set; }
         public GeoPosition[] Area { get; set; }
-        public Cooperative[] Cooperatives { get; set; }
+        public CooperativeFarm[] Cooperatives { get; set; }
 
         public ProductCategory[] Products { get; set; }
         public HarvestBatch[] Harvests { get; set; }

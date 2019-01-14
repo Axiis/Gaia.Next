@@ -1,5 +1,5 @@
 ﻿using Axis.Jupiter;
-using Axis.Jupiter.EFCore;
+using Gaia.Data.EFCore.Contexts;
 
 namespace Gaia.Data.EFCore
 {
@@ -14,8 +14,8 @@ namespace Gaia.Data.EFCore
             new StoreMap.Entry
             { 
                 StoreName = "Gaia.DomainStore",
-                StoreCommandType = typeof(EFStoreCommand),
-                StoreQueryType = typeof(EFStoreQuery)
+                StoreCommandType = typeof(DomainStoreCommand),
+                StoreQueryType = typeof(DomainStoreQuery)
             }
         };
     }
