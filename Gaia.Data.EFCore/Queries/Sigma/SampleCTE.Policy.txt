@@ -1,0 +1,26 @@
+﻿
+--select * from dbo.Policies
+
+declare @parentId uniqueidentifier
+
+WITH PolicyTrees (Id, [rank])
+AS
+(
+-- Anchor member definition
+    SELECT p.Id, 0
+    FROM dbo.Policies AS p
+    WHERE p.Id = '842c3d7f-4b1b-4ca3-a854-fb765d62f5a7'
+	--WHERE p.ParentId is NULL, or whatever other condition would be needed to pick the root policy(ies)
+    UNION ALL
+-- Recursive member definition
+    SELECT child.Id, prev.[rank] + 1
+    FROM PolicyTrees as prev
+    JOIN dbo.Policies AS child ON child.ParentId = prev.Id
+)
+
+
+-- Statement that executes the CTE
+SELECT r.*, dl.rank
+FROM dbo.Policies AS r
+JOIN PolicyTrees AS dl ON dl.Id = r.Id
+ORDER BY dl.[rank]

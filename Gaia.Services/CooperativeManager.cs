@@ -137,7 +137,7 @@ namespace Gaia.Services
             var admins = await _GetAllAdmins(cooperativeId);
 
             //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDataAccess
+            await _dataAccessAuthorizer.AuthorizeAccess(new CooperativeAdminDescriptor
             {
                 Admins = admins
             });
@@ -186,7 +186,7 @@ namespace Gaia.Services
             var admins = await _GetAllAdmins(cooperativeId);
 
             //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDataAccess
+            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
             {
                 Admins = admins
             });
@@ -229,7 +229,7 @@ namespace Gaia.Services
             var admins = await _GetAllAdmins(cooperativeId);
 
             //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDataAccess
+            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
             {
                 Admins = admins
             });
@@ -276,7 +276,7 @@ namespace Gaia.Services
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
             //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDataAccess
+            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
             {
                 Admins = await _GetAllAdmins(cooperativeId)
             });

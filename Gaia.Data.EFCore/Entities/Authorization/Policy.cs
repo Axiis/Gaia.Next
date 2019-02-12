@@ -6,6 +6,7 @@ using Axis.Jupiter;
 using Axis.Luna.Extensions;
 using Axis.Pollux.Authorization.Abac.Models;
 using Axis.Proteus.Ioc;
+using Axis.Sigma;
 
 namespace Gaia.Data.EFCore.Entities.Authorization
 {
@@ -21,7 +22,7 @@ namespace Gaia.Data.EFCore.Entities.Authorization
 
         [ForeignKey(nameof(ParentId))]
         public virtual Policy Parent { get; set; }
-        public Guid ParentId { get; set; }
+        public Guid? ParentId { get; set; }
         public virtual ICollection<Policy> SubPolicies { get; set; } = new HashSet<Policy>();
     }
 
@@ -51,8 +52,10 @@ namespace Gaia.Data.EFCore.Entities.Authorization
 
                 entity.Code = model.Code;
                 entity.GovernedResources = model.GovernedResources
-                    ?.Select(Encode)
-                    .JoinUsing(",");
+                    ?.Select(Serialize)
+                    .Select(Encode)
+                    .Select(Encase)
+                    .JoinUsing("");
                 entity.Title = model.Title;
 
                 entity.Parent = (Policy) context.Transformer.ToEntity(
@@ -73,23 +76,25 @@ namespace Gaia.Data.EFCore.Entities.Authorization
 
                 model.Code = entity.Code;
                 model.GovernedResources = entity.GovernedResources
-                    ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    ?.Split(new[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(Decode)
+                    .Select(Axis.Pollux.Authorization.Abac.Models.Attribute.Parse)
                     .ToArray();
                 model.Title = entity.Title;
 
                 model.Parent = context.Transformer.ToModel<PolluxPolicy>(
-                    entity.Parent, 
-                    command, 
-                    context);
+                    entity.Parent,
+                    command,
+                    context) ?? entity.ParentId.PlaceholderInstance<PolluxPolicy, Guid>(); //repeat this for all optional navigational properties
 
                 model.SubPolicies = entity.SubPolicies
                     .Select(policy => context.Transformer.ToModel<PolluxPolicy>(policy, command, context))
-                    //somewhere here, bind policies to their rules from the Gaia.Core.AuthorizationPolicies Assembly
                     .ToArray();
             };
         }
 
+        private static string Serialize(IAttribute attribute) => attribute?.ToString();
+        private static string Encase(string part) => $"[{part}]";
         private static string Encode(string part) => part?.Replace(",", "@comma;");
         private static string Decode(string part) => part?.Replace("@comma;", ",");
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Axis.Jupiter;
@@ -22,6 +23,7 @@ namespace Gaia.Data.EFCore.Entities.Authentication
         /// <summary>
         /// A string representing the entity - usually a contract operation call, that the multi-factor authentication is being employed to guard"
         /// </summary>
+        [MaxLength(400)]
         public string EventLabel { get; set; }
     }
 

@@ -3,7 +3,7 @@ using Axis.Jupiter.EFCore;
 using Gaia.Data.EFCore.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gaia.Data.EFCore.Contexts
+namespace Gaia.Data.EFCore.Stores
 {
     public class DomainContext: DbContext
     {
@@ -24,6 +24,10 @@ namespace Gaia.Data.EFCore.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder
+                .Entity<Entities.Authentication.MultiFactorEventConfiguration>()
+                .HasIndex(e => e.EventLabel)
+                .IsUnique(true);
         }
 
         #region Entities

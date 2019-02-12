@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Axis.Jupiter;
 using Axis.Luna.Extensions;
 using Axis.Luna.Operation;
@@ -67,6 +65,18 @@ namespace Gaia.Data.EFCore
             model.ModifiedOn = entity.ModifiedOn;
 
             return model;
+        }
+
+        public static TModel PlaceholderInstance<TModel, TKey>(this TKey? key)
+        where TModel : class, IBaseModel<TKey>, new()
+        where TKey : struct
+        {
+            return key == null
+                ? (TModel) null
+                : new TModel
+                {
+                    Id = key.Value
+                };
         }
     }
 }

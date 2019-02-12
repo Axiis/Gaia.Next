@@ -5,32 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Axis.Jupiter.EFCore" Version="4.0.0-pre-636826638556445484" />
+    <PackageReference Include="Axis.Jupiter" Version="4.3.3" />
+    <PackageReference Include="Axis.Jupiter.EFCore" Version="4.0.0-pre-636844467934095170" />
     <PackageReference Include="Axis.Luna.Common" Version="4.2.2" />
     <PackageReference Include="Axis.Luna.Extensions" Version="4.2.1" />
     <PackageReference Include="Axis.Luna.Operation" Version="4.2.1" />
-    <PackageReference Include="Axis.Pollux.Authentication" Version="4.3.1" />
-    <PackageReference Include="Axis.Pollux.Authorization" Version="4.2.1" />
-    <PackageReference Include="Axis.Pollux.Authorization.Abac" Version="4.2.1" />
-    <PackageReference Include="Axis.Pollux.Common" Version="4.2.0" />
+    <PackageReference Include="Axis.Pollux.Authentication" Version="4.3.2" />
+    <PackageReference Include="Axis.Pollux.Authentication.Services" Version="4.3.2" />
+    <PackageReference Include="Axis.Pollux.Authorization" Version="4.3.0" />
+    <PackageReference Include="Axis.Pollux.Authorization.Abac" Version="4.5.0" />
+    <PackageReference Include="Axis.Pollux.Common" Version="4.3.0" />
     <PackageReference Include="Axis.Pollux.Communication" Version="4.0.0" />
-    <PackageReference Include="Axis.Pollux.Identity" Version="4.2.0" />
-    <PackageReference Include="Axis.Pollux.Logon" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Axis.Sigma">
-      <HintPath>..\..\..\..\..\..\Users\stda01\.nuget\packages\axis.sigma\4.2.0\lib\netcoreapp2.0\Axis.Sigma.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\Pollux\" />
+    <PackageReference Include="Axis.Pollux.Identity" Version="4.3.0" />
+    <PackageReference Include="Axis.Pollux.Identity.Services" Version="4.3.0" />
+    <PackageReference Include="Axis.Pollux.Logon" Version="4.2.0" />
+    <PackageReference Include="Axis.Sigma" Version="4.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Gaia.Core\Gaia.Core.csproj" />
+    <ProjectReference Include="..\Gaia.Services\Gaia.Services.csproj" />
   </ItemGroup>
 
 </Project>

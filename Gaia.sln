@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaia.Infrastructure.Newtonsoft", "Gaia.Infrastructure.Newtonsoft\Gaia.Infrastructure.Newtonsoft.csproj", "{AC1BDA64-429F-4982-92A7-4455BC260BCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaia.Services.Tests", "Gaia.Services.Tests\Gaia.Services.Tests.csproj", "{1EB8F723-65F8-424A-BF4D-0189F9DC018B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{AC1BDA64-429F-4982-92A7-4455BC260BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC1BDA64-429F-4982-92A7-4455BC260BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC1BDA64-429F-4982-92A7-4455BC260BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EB8F723-65F8-424A-BF4D-0189F9DC018B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB8F723-65F8-424A-BF4D-0189F9DC018B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EB8F723-65F8-424A-BF4D-0189F9DC018B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EB8F723-65F8-424A-BF4D-0189F9DC018B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{A41215F2-8B56-48C5-96E8-06A15012F751} = {BFD0DBE4-14BE-4295-82FA-8AE43072E897}
 		{1C3C26B0-63E7-4E50-9F6B-7D78A954CAFC} = {BFD0DBE4-14BE-4295-82FA-8AE43072E897}
 		{AC1BDA64-429F-4982-92A7-4455BC260BCB} = {234F02B7-0701-492F-A6B6-E570BE913460}
+		{1EB8F723-65F8-424A-BF4D-0189F9DC018B} = {AC310484-F51C-4AE9-B84F-7B987878CF13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C63F8B60-44F4-4348-A42B-DE24F335B73A}
