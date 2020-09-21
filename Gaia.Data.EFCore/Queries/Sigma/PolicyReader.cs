@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using static Axis.Luna.Extensions.ExceptionExtension;
+using static Axis.Luna.Extensions.Common;
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Axis.Jupiter;
@@ -13,9 +16,6 @@ using System;
 using Axis.Pollux.Authorization.Abac.Models;
 using Gaia.Core.Contracts;
 using Gaia.Core.Exceptions;
-
-using static Axis.Luna.Extensions.ExceptionExtension;
-using static Axis.Luna.Extensions.Common;
 using Axis.Jupiter.EFCore;
 
 namespace Gaia.Data.EFCore.Queries.Sigma

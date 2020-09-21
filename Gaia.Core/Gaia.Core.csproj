@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Axis.Luna.Common" Version="4.2.2" />
-    <PackageReference Include="Axis.Luna.Extensions" Version="4.2.1" />
-    <PackageReference Include="Axis.Luna.Operation" Version="4.2.1" />
-    <PackageReference Include="Axis.Pollux.Authentication" Version="4.3.2" />
-    <PackageReference Include="Axis.Pollux.Authorization" Version="4.3.0" />
-    <PackageReference Include="Axis.Pollux.Common" Version="4.3.0" />
-    <PackageReference Include="Axis.Pollux.Identity" Version="4.3.0" />
-    <PackageReference Include="Axis.Pollux.Logon" Version="4.2.0" />
-    <PackageReference Include="Axis.Sigma" Version="4.4.1" />
+    <PackageReference Include="Axis.Luna.Common" Version="4.4.0" />
+    <PackageReference Include="Axis.Luna.Extensions" Version="4.3.0" />
+    <PackageReference Include="Axis.Luna.Operation" Version="4.3.0" />
+    <PackageReference Include="Axis.Pollux.Authentication" Version="4.6.0" />
+    <PackageReference Include="Axis.Pollux.Authorization" Version="4.9.0" />
+    <PackageReference Include="Axis.Pollux.Common" Version="4.5.0" />
+    <PackageReference Include="Axis.Pollux.Identity" Version="4.6.0" />
+    <PackageReference Include="Axis.Pollux.Logon" Version="4.3.0" />
+    <PackageReference Include="Axis.Sigma" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 

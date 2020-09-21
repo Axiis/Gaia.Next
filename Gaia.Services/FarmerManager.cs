@@ -1,10 +1,10 @@
 ﻿using System;
 using Axis.Jupiter;
+using Axis.Luna.Extensions;
 using Axis.Luna.Operation;
 using Axis.Pollux.Authorization.Contracts;
 using Axis.Pollux.Common.Utils;
 using Gaia.Core.Contracts;
-using Gaia.Core.CustomDataAccessAuth;
 using Gaia.Core.Exceptions;
 using Gaia.Core.Models;
 using Gaia.Services.Queries;
@@ -28,9 +28,9 @@ namespace Gaia.Services
             StoreProvider storeProvider)
         {
             ThrowNullArguments(
-                () => dataAuthorizer,
-                () => queries,
-                () => storeProvider);
+                nameof(dataAuthorizer).ObjectPair(dataAuthorizer),
+                nameof(queries).ObjectPair(queries),
+                nameof(storeProvider).ObjectPair(storeProvider));
 
             _storeProvider = storeProvider;
             _dataAuth = dataAuthorizer;
@@ -49,14 +49,11 @@ namespace Gaia.Services
                 .ThrowIfNull(new GaiaException(PolluxErrorCodes.InvalidArgument))
                 .Validate();
 
-            //data access authorization
-            await _dataAuth.AuthorizeAccess(typeof(Farmer).FullName);
-
             var user = (await _queries
                 .GetUser(userId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
-            //farmer.Id = Guid.NewGuid(); //<-- this is redundant because the StoreTransformer always adds new Guids for objects being added to the store.
+            farmer.Id = Guid.NewGuid();
             farmer.Farms = new Farm[0];
             farmer.Status = FarmerStatus.Active;
             farmer.User = user;

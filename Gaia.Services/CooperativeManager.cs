@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Axis.Jupiter;
+﻿using Axis.Jupiter;
+using Axis.Luna.Extensions;
 using Axis.Luna.Operation;
 using Axis.Pollux.Authorization.Contracts;
 using Axis.Pollux.Common.Utils;
 using Gaia.Core.Contracts;
-using Gaia.Core.CustomDataAccessAuth;
 using Gaia.Core.Exceptions;
 using Gaia.Core.Models;
+using Gaia.Services.AccessDescriptors;
 using Gaia.Services.Queries;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using static Axis.Luna.Extensions.ExceptionExtension;
 
 namespace Gaia.Services
@@ -30,9 +31,9 @@ namespace Gaia.Services
             StoreProvider storeProvider)
         {
             ThrowNullArguments(
-                () => dataAuthorizer,
-                () => queries,
-                () => storeProvider);
+                nameof(dataAuthorizer).ObjectPair(dataAuthorizer),
+                nameof(queries).ObjectPair(queries),
+                nameof(storeProvider).ObjectPair(storeProvider));
 
             _storeProvider = storeProvider;
             _dataAccessAuthorizer = dataAuthorizer;
@@ -45,10 +46,7 @@ namespace Gaia.Services
             await cooperative
                 .ThrowIfNull(new GaiaException(PolluxErrorCodes.InvalidArgument))
                 .Validate();
-
-            //Ensure that the right principal has access to this data
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Cooperative).FullName);
-
+            
             cooperative.Id = Guid.NewGuid();
             cooperative.Admins = null;
             cooperative.Farms = null;
@@ -72,10 +70,12 @@ namespace Gaia.Services
                 .GetCooperative(cooperative.Id))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(persisted.Id, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
             //Ensure that the right principal has access to this data
-            await _dataAccessAuthorizer.AuthorizeAccess(
-                typeof(Cooperative).FullName,
-                persisted.Id.ToString());
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             //copy values
             persisted.Title = cooperative.Title;
@@ -96,20 +96,23 @@ namespace Gaia.Services
             if (cooperativeId == default(Guid))
                 throw new GaiaException(PolluxErrorCodes.InvalidArgument);
 
-            var cooperative = (await _queries
+            var persisted = (await _queries
                 .GetCooperative(cooperativeId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+            
+
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(persisted.Id, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
             //Ensure that the right principal has access to this data
-            await _dataAccessAuthorizer.AuthorizeAccess(
-                typeof(Cooperative).FullName,
-                cooperative.Id.ToString());
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
-            cooperative.Status = status;
+            persisted.Status = status;
             var storeCommand = _storeProvider.CommandFor(typeof(Cooperative).FullName);
 
             (await storeCommand
-                .Update(cooperative))
+                .Update(persisted))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreCommandResult));
         });
 
@@ -126,7 +129,7 @@ namespace Gaia.Services
                 default(Guid),
                 new GaiaException(PolluxErrorCodes.InvalidArgument));
 
-            var cooperative = (await _queries
+            var persisted = (await _queries
                 .GetCooperative(cooperativeId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
@@ -134,23 +137,23 @@ namespace Gaia.Services
                 .GetUser(userId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
-            var admins = await _GetAllAdmins(cooperativeId);
 
-            //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeAccess(new CooperativeAdminDescriptor
-            {
-                Admins = admins
-            });
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(persisted.Id, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
+            //Ensure that the right principal has access to this data
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             //make sure we are not adding ourselves
-            if(admins.Any(admin => admin.User.Id == userId))
+            if (admins.Any(admin => admin.User.Id == userId))
                 throw new GaiaException(ErrorCodes.DomainLogicError);
 
             //finally add a new admin object for the cooperative
             var coopAdmin = new CooperativeAdmin
             {
                 User = user,
-                Cooperative = cooperative
+                Cooperative = persisted
             };
 
             var storeCommand = _storeProvider.CommandFor(typeof(CooperativeAdmin).FullName);
@@ -183,13 +186,13 @@ namespace Gaia.Services
                 .GetUser(userId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
-            var admins = await _GetAllAdmins(cooperativeId);
 
-            //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
-            {
-                Admins = admins
-            });
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(cooperativeId, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
+            //Ensure that the right principal has access to this data
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             //get the admin to be removed
             var coopAdmin = admins
@@ -226,13 +229,13 @@ namespace Gaia.Services
                 .GetFarm(farmId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
-            var admins = await _GetAllAdmins(cooperativeId);
 
-            //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
-            {
-                Admins = admins
-            });
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(cooperativeId, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
+            //Ensure that the right principal has access to this data
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             //filter out duplicates
             (await _queries
@@ -275,11 +278,13 @@ namespace Gaia.Services
                 .GetFarm(farmId))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
 
-            //ensure that the current user is an admin for the Cooperative
-            await _dataAccessAuthorizer.AuthorizeCustomAccess(new CooperativeAdminDescriptor
-            {
-                Admins = await _GetAllAdmins(cooperativeId)
-            });
+
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(cooperativeId, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
+            //Ensure that the right principal has access to this data
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             //get the Farm map to be removed
             var coopFarm = await _queries.GetCooperativeFarm(cooperativeId, farmId);
@@ -300,11 +305,14 @@ namespace Gaia.Services
             //validate parameter
             cooperativeId
                 .ThrowIf(default(Guid), new GaiaException(PolluxErrorCodes.InvalidArgument));
+            
 
-            //make sure current user can access cooperative
-            await _dataAccessAuthorizer.AuthorizeAccess(
-                typeof(Cooperative).FullName,
-                cooperativeId.ToString());
+            var pageRequest = ArrayPageRequest.CreateNormalizedRequest();
+            var admins = await pageRequest.GetAll(r => _queries.GetAdmins(cooperativeId, r));
+            admins.ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
+
+            //Ensure that the right principal has access to this data
+            await _dataAccessAuthorizer.AuthorizeAccess(new CoopAdminOwnedData(admins));
 
             return (await _queries
                 .GetCooperative(cooperativeId))
@@ -318,9 +326,6 @@ namespace Gaia.Services
             userId
                 .ThrowIf(default(Guid), new GaiaException(PolluxErrorCodes.InvalidArgument));
 
-            //make sure current user can access cooperatives
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Cooperative).FullName);
-
             return (await _queries
                 .GetAdminCooperatives(userId, request))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
@@ -333,9 +338,6 @@ namespace Gaia.Services
             farmerId
                 .ThrowIf(default(Guid), new GaiaException(PolluxErrorCodes.InvalidArgument));
 
-            //make sure current user can access cooperatives
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Cooperative).FullName);
-
             return (await _queries
                 .GetFarmerCooperatives(farmerId, request))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
@@ -344,9 +346,6 @@ namespace Gaia.Services
         public Operation<ArrayPage<Cooperative>> GetAllCooperatives(ArrayPageRequest request = null)
         => Operation.Try(async () =>
         {
-            //make sure current user can access cooperatives
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Cooperative).FullName);
-
             return (await _queries
                 .GetAllCooperatives(request))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
@@ -358,9 +357,6 @@ namespace Gaia.Services
             //validate parameter
             cooperativeId
                 .ThrowIf(default(Guid), new GaiaException(PolluxErrorCodes.InvalidArgument));
-
-            //make sure current user can access farmers
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Farmer).FullName);
 
             return (await _queries
                 .GetRegisteredFarmers(cooperativeId, request))
@@ -374,31 +370,9 @@ namespace Gaia.Services
             cooperativeId
                 .ThrowIf(default(Guid), new GaiaException(PolluxErrorCodes.InvalidArgument));
 
-            //make sure current user can access farms
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Farm).FullName);
-
             return (await _queries
                 .GetRegisteredFarms(cooperativeId, request))
                 .ThrowIfNull(new GaiaException(ErrorCodes.InvalidStoreQueryResult));
         });
-
-
-        private async Task<CooperativeAdmin[]> _GetAllAdmins(Guid cooperativeId)
-        {
-            var request = ArrayPageRequest.CreateNormalizedRequest();
-            var admins = new List<CooperativeAdmin>();
-            ArrayPage<CooperativeAdmin> page;
-            while ((page = await _queries.GetAdmins(cooperativeId, request)).Page.Length > 0)
-            {
-                admins.AddRange(page.Page);
-                request = new ArrayPageRequest
-                {
-                    PageIndex = request.PageIndex + 1,
-                    PageSize = request.PageSize
-                };
-            }
-
-            return admins.ToArray();
-        }
     }
 }

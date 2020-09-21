@@ -52,10 +52,7 @@ namespace Gaia.Data.EFCore.Entities.Authorization
 
                 entity.Code = model.Code;
                 entity.GovernedResources = model.GovernedResources
-                    ?.Select(Serialize)
-                    .Select(Encode)
-                    .Select(Encase)
-                    .JoinUsing("");
+                    ?.JoinUsing(",");
                 entity.Title = model.Title;
 
                 entity.Parent = (Policy) context.Transformer.ToEntity(
@@ -75,11 +72,7 @@ namespace Gaia.Data.EFCore.Entities.Authorization
                     _resolver);
 
                 model.Code = entity.Code;
-                model.GovernedResources = entity.GovernedResources
-                    ?.Split(new[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(Decode)
-                    .Select(Axis.Pollux.Authorization.Abac.Models.Attribute.Parse)
-                    .ToArray();
+                model.GovernedResources = entity.GovernedResources?.Split(',');
                 model.Title = entity.Title;
 
                 model.Parent = context.Transformer.ToModel<PolluxPolicy>(
@@ -91,11 +84,7 @@ namespace Gaia.Data.EFCore.Entities.Authorization
                     .Select(policy => context.Transformer.ToModel<PolluxPolicy>(policy, command, context))
                     .ToArray();
             };
-        }
+       }
 
-        private static string Serialize(IAttribute attribute) => attribute?.ToString();
-        private static string Encase(string part) => $"[{part}]";
-        private static string Encode(string part) => part?.Replace(",", "@comma;");
-        private static string Decode(string part) => part?.Replace("@comma;", ",");
     }
 }

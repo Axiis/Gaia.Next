@@ -15,7 +15,6 @@ using Gaia.Core.Contracts.Results;
 using Gaia.Core.Exceptions;
 using Gaia.Core.Models;
 using Gaia.Core.Utils;
-using Gaia.Services.Queries;
 
 using static Axis.Luna.Extensions.ExceptionExtension;
 
@@ -23,6 +22,7 @@ namespace Gaia.Services
 {
     public class AccountManager: IAccountManager
     {
+        #region Fields
         private readonly StoreProvider _storeProvider;
         private readonly IDataAccessAuthorizer _dataAccessAuthorizer;
         private readonly ICredentialManager _credentialManager;
@@ -32,8 +32,8 @@ namespace Gaia.Services
         private readonly IContactDataManager _contactManager;
         private readonly IFarmerManager _farmerManager;
         private readonly IMultiFactorAuthenticator _multiFactorAuth;
-
-
+        #endregion
+        
         public AccountManager(
             IDataAccessAuthorizer dataAuthorizer,
             IUserManager userManager,
@@ -46,15 +46,15 @@ namespace Gaia.Services
             StoreProvider storeProvider)
         {
             ThrowNullArguments(
-                () => dataAuthorizer,
-                () => userManager,
-                () => contactManager,
-                () => credentialManager,
-                () => cooperativeManager,
-                () => farmerManager,
-                () => userIdentityManager,
-                () => multiFactorAuthenticator,
-                () => storeProvider);
+                nameof(dataAuthorizer).ObjectPair(dataAuthorizer),
+                nameof(userManager).ObjectPair(userManager),
+                nameof(contactManager).ObjectPair(contactManager),
+                nameof(credentialManager).ObjectPair(credentialManager),
+                nameof(cooperativeManager).ObjectPair(cooperativeManager),
+                nameof(farmerManager).ObjectPair(farmerManager),
+                nameof(userIdentityManager).ObjectPair(multiFactorAuthenticator),
+                nameof(multiFactorAuthenticator).ObjectPair(multiFactorAuthenticator),
+                nameof(storeProvider).ObjectPair(storeProvider));
 
             _storeProvider = storeProvider;
             _dataAccessAuthorizer = dataAuthorizer;
@@ -79,15 +79,15 @@ namespace Gaia.Services
             var adminUser = (await _userManager
                 .GetUser(info.AdminUserId))
                 .ThrowIfNull(new GaiaException(Axis.Pollux.Common.Exceptions.ErrorCodes.InvalidContractParamState));
-
-            //authorize 'Cooperative' data access
-            await _dataAccessAuthorizer.AuthorizeAccess(typeof(Cooperative).FullName, adminUser.Id);
-
+            
             //create the cooperative
-            await _cooperativeManager.CreateCooperative(new Cooperative
+            var cooperative = await _cooperativeManager.CreateCooperative(new Cooperative
             {
                 Title = info.Title
             });
+
+            //make the user an admin for the cooperative
+            await _cooperativeManager.AddAdmin(cooperative.Id, adminUser.Id);
         });
 
         public Operation<AccountRegistrationResult> RegisterUserAndCooperative(UserAndCooperativeRegistrationInfo info)
@@ -108,7 +108,7 @@ namespace Gaia.Services
 
             //create the identity
             //since we require the initial user name to be the email, make sure it's a valid email address
-            var identity = await _userIdentityManager.CreateIdentity(info.AdminEmail, user.Id);
+            await _userIdentityManager.CreateIdentity(info.AdminEmail, user.Id);
 
             //add the password credential
             await _credentialManager.AddCredential(user.Id, new Credential
@@ -130,10 +130,13 @@ namespace Gaia.Services
                 });
 
             //create the cooperative
-            await _cooperativeManager.CreateCooperative(new Cooperative
+            var cooperative = await _cooperativeManager.CreateCooperative(new Cooperative
             {
                 Title = info.Title
             });
+
+            //make the user an admin for the cooperative
+            await _cooperativeManager.AddAdmin(cooperative.Id, user.Id);
 
             //request account verification multi-factor authentication
             var token = await _multiFactorAuth.RequestMultiFactorToken(
@@ -166,7 +169,7 @@ namespace Gaia.Services
 
             //create the identity
             //since we require the initial user name to be the email, make sure it's a valid email address
-            var identity = await _userIdentityManager.CreateIdentity(info.AccountEmail, user.Id);
+            await _userIdentityManager.CreateIdentity(info.AccountEmail, user.Id);
 
             //add the password credential
             await _credentialManager.AddCredential(user.Id, new Credential
@@ -179,13 +182,12 @@ namespace Gaia.Services
             });
 
             //add the contact detail for the email
-            var contact = await _contactManager
-                .AddContactData(user.Id, new ContactData
-                {
-                    Data = info.AccountEmail,
-                    Channel = Constants.ContactChannel_Email,
-                    Status = Constants.ContactStatus_Active
-                });
+            var contact = await _contactManager.AddContactData(user.Id, new ContactData
+            {
+                Data = info.AccountEmail,
+                Channel = Constants.ContactChannel_Email,
+                Status = Constants.ContactStatus_Active
+            });
 
             //create the farmer
             await _farmerManager.CreateFarmer(user.Id, new Farmer
@@ -280,8 +282,7 @@ namespace Gaia.Services
                 return new AccountRegistrationResult { Token = token };
         });
 
-
-
+        
         public Operation ValidateCooperativeAccountRegistration(MultiFactorAuthenticationInfo authInfo)
         => Operation.Try(async () =>
         {

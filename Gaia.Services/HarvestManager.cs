@@ -4,10 +4,8 @@ using Axis.Luna.Operation;
 using Axis.Pollux.Authorization.Contracts;
 using Axis.Pollux.Common.Utils;
 using Gaia.Core.Contracts;
-using Gaia.Core.CustomDataAccessAuth;
 using Gaia.Core.Exceptions;
 using Gaia.Core.Models;
-using Gaia.Core.Utils;
 using Gaia.Services.Queries;
 
 using static Axis.Luna.Extensions.ExceptionExtension;
