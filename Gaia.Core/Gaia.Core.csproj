@@ -14,7 +14,7 @@
     <PackageReference Include="Axis.Pollux.Identity" Version="4.3.0" />
     <PackageReference Include="Axis.Pollux.Logon" Version="4.2.0" />
     <PackageReference Include="Axis.Sigma" Version="4.4.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
 </Project>
